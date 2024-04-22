@@ -1,3 +1,40 @@
 grant {
 	permission java.security.AllPermission;
   };
+Run command: 
+--------RMI--------------------------------------
+
+javac SampleServerImpl.java
+rmic SampleServerImpl
+java -Djava.security.policy=policy.all SampleServerImpl
+
+
+SampleServer
+javac SampleServer.java
+start rmiregistry
+
+SampleClient
+javac SampleClient.java
+java -Djava.security.ploicy=policy.all SampleServerImpl
+
+-----------------------clockSynchronization-------------
+
+Enter the no. of physical clocks: 3
+No. of nodes for physical clock 1: 2
+Enter the name of process: a
+Enter the name of process: b
+No. of nodes for physical clock 2: 2
+Enter the name of process: c
+Enter the name of process: d
+No. of nodes for physical clock 3: 2
+Enter the name of process: e
+Enter the name of process: f
+Physical Clock 1
+Process a has P.T. : 3
+Process b has P.T. : 10
+Physical Clock 2
+Process c has P.T. : 7
+Process d has P.T. : 13
+Physical Clock 3
+Process e has P.T. : 3
+Process f has P.T. : 9
