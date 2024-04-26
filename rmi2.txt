@@ -1,0 +1,81 @@
+on first cmd run javac AdditionInterface.java
+then on same cmd run javac AdditionServer.java
+
+then on second cmd run javac AdditionImpl.java
+then on same cmd run javac AdditionClient.java
+
+then on first cmd rung start rmiregistrey
+then on cmd run java AdditionServer
+
+then on second cmd run java AdditionClient
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+AdditionInterface.java
+
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+
+public interface AdditionInterface extends Remote {
+    int add(int a, int b) throws RemoteException;
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+AdditionImpl.java
+
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+
+public class AdditionImpl extends UnicastRemoteObject implements AdditionInterface {
+    protected AdditionImpl() throws RemoteException {
+        super();
+    }
+
+    @Override
+    public int add(int a, int b) throws RemoteException {
+        return a + b;
+    }
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+AdditionServer.java
+
+import java.rmi.registry.Registry;
+import java.rmi.registry.LocateRegistry;
+
+public class AdditionServer {
+    public static void main(String[] args) {
+        try {
+            AdditionImpl obj = new AdditionImpl();
+            Registry registry = LocateRegistry.createRegistry(1099);
+            registry.rebind("Addition", obj);
+            System.out.println("Server is running...");
+        } catch (Exception e) {
+            System.err.println("Server exception: " + e.toString());
+            e.printStackTrace();
+        }
+    }
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+AdditionClient.java
+
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+
+public class AdditionClient {
+    public static void main(String[] args) {
+        try {
+            Registry registry = LocateRegistry.getRegistry("localhost", 1099);
+            AdditionInterface obj = (AdditionInterface) registry.lookup("Addition");
+            int result = obj.add(5, 7);
+            System.out.println("Result: " + result);
+        } catch (Exception e) {
+            System.err.println("Client exception: " + e.toString());
+            e.printStackTrace();
+        }
+    }
+}
+
