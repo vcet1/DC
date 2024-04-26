@@ -1,0 +1,114 @@
+//to add two numbers
+
+//first to show result on server as well as client
+
+AdditionServer.java
+
+import java.io.*;
+import java.net.*;
+
+public class AdditionServer {
+    public static void main(String[] args) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(5000);
+            System.out.println("Server started. Waiting for clients...");
+
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Client connected: " + clientSocket);
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+                int num1 = Integer.parseInt(in.readLine());
+                int num2 = Integer.parseInt(in.readLine());
+                int sum = num1 + num2;
+                
+                // Display the result on the server side
+                System.out.println("Sum: " + sum);
+
+                out.println("Sum: " + sum);
+
+                clientSocket.close();
+            }
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+to show result on client
+
+AdditionServer.java
+
+import java.io.*;
+import java.net.*;
+
+public class AdditionServer {
+    public static void main(String[] args) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(5000);
+            System.out.println("Server started. Waiting for clients...");
+
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("Client connected: " + clientSocket);
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+
+                int num1 = Integer.parseInt(in.readLine());
+                int num2 = Integer.parseInt(in.readLine());
+                int sum = num1 + num2;
+
+                out.println("Sum: " + sum);
+
+                clientSocket.close();
+            }
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+}
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+//Client code same in both cases
+
+AdditionClient.java
+
+import java.io.*;
+import java.net.*;
+
+public class AdditionClient {
+    public static void main(String[] args) {
+        try {
+            Socket socket = new Socket("localhost", 5000);
+            System.out.println("Connected to server.");
+
+            BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+
+            System.out.print("Enter first number: ");
+            int num1 = Integer.parseInt(userInput.readLine());
+            out.println(num1);
+
+            System.out.print("Enter second number: ");
+            int num2 = Integer.parseInt(userInput.readLine());
+            out.println(num2);
+
+            String response = in.readLine();
+            System.out.println("Server response: " + response);
+
+            socket.close();
+        } catch (IOException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+}
+
+
+
