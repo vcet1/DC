@@ -1,0 +1,115 @@
+on first cmd run javac Search.java
+then on same cmd run javac SearchServer.java
+
+then on second cmd run javac SearchQuery.java
+then on same cmd run javac ClientRequest.java
+
+then on first cmd rung start rmiregistrey
+then on cmd run java SearchServer
+
+then on second cmd run java ClientRequest
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Search.java
+
+// Creating a Search interface
+import java.rmi.*;
+public interface Search extends Remote
+{
+    // Declaring the method prototype
+    public String query(String search) throws RemoteException;
+}
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+SearchServer.java
+
+// Java program for server application
+import java.rmi.*;
+import java.rmi.registry.*;
+public class SearchServer
+{
+	public static void main(String args[])
+	{
+		try
+		{
+			// Create an object of the interface
+			// implementation class
+			Search obj = new SearchQuery();
+
+			// rmiregistry within the server JVM with
+			// port number 1900
+			LocateRegistry.createRegistry(1900);
+
+			// Binds the remote object by the name
+			// geeksforgeeks
+			Naming.rebind("rmi://localhost:1900"+
+						"/geeksforgeeks",obj);
+		}
+		catch(Exception ae)
+		{
+			System.out.println(ae);
+		}
+	}
+}
+
+-------------------------------------------------------------------------------------------------------------------------------
+
+SearchQuery.java
+
+
+// Java program to implement the Search interface
+import java.rmi.*;
+import java.rmi.server.*;
+public class SearchQuery extends UnicastRemoteObject
+						implements Search
+{
+	// Default constructor to throw RemoteException
+	// from its parent constructor
+	SearchQuery() throws RemoteException
+	{
+		super();
+	}
+
+	// Implementation of the query interface
+	public String query(String search)
+					throws RemoteException
+	{
+		String result;
+		if (search.equals("Reflection in Java"))
+			result = "Found";
+		else
+			result = "Not Found";
+
+		return result;
+	}
+}
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+ClientRequest.java
+
+// Java program for client application
+import java.rmi.*;
+public class ClientRequest
+{
+	public static void main(String args[])
+	{
+		String answer,value="Reflection in Java";
+		try
+		{
+			// lookup method to find reference of remote object
+			Search access =
+				(Search)Naming.lookup("rmi://localhost:1900"+
+									"/geeksforgeeks");
+			answer = access.query(value);
+			System.out.println("Article on " + value +
+							" " + answer+" at GeeksforGeeks");
+		}
+		catch(Exception ae)
+		{
+			System.out.println(ae);
+		}
+	}
+}
